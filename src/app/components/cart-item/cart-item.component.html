@@ -1,0 +1,65 @@
+<mat-card class="cart-item">
+  <mat-card-content class="responsive-grid">
+
+    <div class="product-data">
+      <img
+        mat-card-image
+        ngSrc="{{ item.product.img }}"
+        alt="{{ item.product.name }}"
+        width="120"
+        height="120"
+      />
+      <div class="details">
+        <mat-card-title>
+          <strong>{{ item.product.name | titlecase }}</strong>
+        </mat-card-title>
+        <p>Remaining: {{ item.product.availableAmount }}</p>
+        <span class="spacer"></span>
+        <button
+          mat-raised-button
+          color="warn"
+          matTooltip="Remove Product from Cart"
+          (click)="handleRemove(item.product.id)"
+        >
+          <mat-icon>delete</mat-icon>
+          Remove
+        </button>
+      </div>
+    </div>
+
+    <div class="quantity-control">
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="handleDecrement(item)"
+      >
+        <mat-icon>remove</mat-icon>
+      </button>
+      <input
+        type="number"
+        [value]="item.quantity"
+        [min]="item.product.minOrderAmount"
+        [max]="item.product.availableAmount"
+      />
+      <button
+        mat-icon-button
+        color="primary"
+        (click)="handleIncrement(item)"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+
+    <div class="price-and-total">
+      <strong>
+        {{ item.product.price | currency }}
+      </strong>
+    </div>
+
+    <div class="price-and-total">
+      <strong>
+        {{ (item.quantity * item.product.price) | currency }}
+      </strong>
+    </div>
+  </mat-card-content>
+</mat-card>

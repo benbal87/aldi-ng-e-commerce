@@ -1,0 +1,38 @@
+<mat-card class="product">
+  <mat-card-header>
+    <mat-card-title>{{ product.name }}</mat-card-title>
+  </mat-card-header>
+  <div class="img-container">
+    <img
+      [ngSrc]="product.img"
+      alt="{{ product.name }}"
+      fill
+      priority
+      class="responsive-image"
+    >
+  </div>
+  <mat-card-content>
+    <p>Price: {{ product.price }} $</p>
+    <p>Available Amount: {{ product.availableAmount }}</p>
+  </mat-card-content>
+  <mat-card-actions>
+    <mat-form-field subscriptSizing="dynamic">
+      <mat-label>Order Amount</mat-label>
+      <input
+        matInput
+        type="number"
+        [min]="product.minOrderAmount"
+        [max]="product.availableAmount"
+        [(ngModel)]="quantities[product.id]"
+      />
+    </mat-form-field>
+    <button
+      mat-icon-button
+      matTooltip="Add to Cart"
+      (click)="handleAddToCart(product)"
+      [disabled]="product.availableAmount === 0 || product.availableAmount < quantities[product.id]"
+    >
+      <mat-icon>shopping_cart</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

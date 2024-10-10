@@ -1,0 +1,71 @@
+@import "globals";
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+div.shopping-cart-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  & > div.empty-cart {
+    font-size: x-large;
+    text-align: center;
+    padding: 5rem 0;
+
+    & > mat-icon {
+      font-size: 3rem;
+      height: auto;
+      width: auto;
+      margin-bottom: 1rem;
+    }
+  }
+
+  & > div.shopping-cart {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+
+    &[hidden] {
+      display: none;
+    }
+
+    & > div.cart-items {
+      flex: 70%;
+      display: flex;
+      flex-flow: column nowrap;
+      gap: 1rem;
+
+      & > div.cart-items-header {
+        @include responsive-grid-layout();
+
+        & > p {
+          text-align: center;
+          text-transform: uppercase;
+          font-size: small;
+          color: darken(#d7e3ff, 30%);
+        }
+      }
+    }
+
+    @media only screen and (max-width: 768px) {
+      flex-flow: column;
+      align-items: center;
+
+      & > div.cart-items {
+        flex-flow: row wrap;
+        justify-content: center;
+
+        & > div.cart-items-header {
+          display: none;
+        }
+      }
+    }
+  }
+
+  & > a.mat-mdc-button {
+    margin-top: 1rem;
+  }
+}

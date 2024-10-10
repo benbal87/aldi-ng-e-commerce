@@ -1,0 +1,45 @@
+<div class="order-summary">
+  <mat-card>
+    <mat-card-title>
+      <strong>Order Summary</strong>
+    </mat-card-title>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <p><strong>Items:</strong> {{ totalQuantity$ | async }}</p>
+      <p><strong>Shipping:</strong> {{ shippingCost | currency }}</p>
+      <mat-form-field appearance="outline">
+        <mat-label>Promo Code</mat-label>
+        <input
+          matInput
+          type="text"
+          placeholder="Enter your code"
+          [(ngModel)]="promoCode"
+        />
+        <button
+          matSuffix
+          mat-icon-button
+          aria-label="Apply Promo Code"
+          (click)="applyPromoCode()"
+          [disabled]="!promoCode"
+        >
+          <mat-icon>local_offer</mat-icon>
+        </button>
+      </mat-form-field>
+    </mat-card-content>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-footer>
+      <p><strong>Total Cost:</strong> {{ totalPrice$ | async | currency }}</p>
+    </mat-card-footer>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="checkout()">
+        <mat-icon>payment</mat-icon>
+        Checkout
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

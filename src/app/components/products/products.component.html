@@ -1,0 +1,40 @@
+<ng-container *ngIf="products$ | async as products">
+  <div
+    matSort
+    (matSortChange)="sortData($event, products)"
+    class="sorting-container"
+  >
+    <button
+      mat-raised-button
+      [disabled]="sortState.active === 'name'"
+    >
+      <a mat-sort-header="name">Sort by Name</a>
+    </button>
+    <button
+      mat-raised-button
+      [disabled]="sortState.active === 'price'"
+    >
+      <a mat-sort-header="price">Sort by Price</a>
+    </button>
+  </div>
+</ng-container>
+
+<div class="grid-container">
+
+  <ng-container *ngIf="products$ | async as products">
+    <ng-container *ngFor="let product of (products | slice: pageStartItemIndex: pageEndItemIndex)">
+      <app-products-item
+        [product]="product"
+        [quantities]="quantities"
+        (addToCart)="addToCart($event)"
+      ></app-products-item>
+    </ng-container>
+  </ng-container>
+
+</div>
+
+<mat-paginator
+  (page)="handlePageEvent($event)"
+  aria-label="Select page"
+  showFirstLastButtons
+></mat-paginator>

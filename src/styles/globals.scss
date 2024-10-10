@@ -1,0 +1,92 @@
+@mixin responsive-grid-layout($columns: 55% 15% 15% 15%, $gap: 0.2rem, $breakpoint: 768px) {
+  display: grid;
+  grid-template-columns: $columns;
+  gap: $gap;
+
+  @media (max-width: $breakpoint) {
+    grid-template-columns: 100%;
+  }
+}
+
+$screen-width-xs: 475px;
+$screen-width-sm: 640px;
+$screen-width-md: 768px;
+$screen-width-lg: 1024px;
+$screen-width-xl: 1280px;
+$screen-width-2xl: 1536px;
+
+@mixin respond($screen-width) {
+  // Screen width XS
+  @if ($screen-width == min-xs) {
+    @media (min-width: $screen-width-xs) {
+      @content
+    }
+  }
+  @if ($screen-width == max-xs) {
+    @media (max-width: $screen-width-xs) {
+      @content
+    }
+  }
+
+  // Screen width SM
+  @if ($screen-width == min-sm) {
+    @media (min-width: $screen-width-sm) {
+      @content
+    }
+  }
+  @if ($screen-width == max-sm) {
+    @media (max-width: $screen-width-sm) {
+      @content
+    }
+  }
+
+  // Screen width MD
+  @if ($screen-width == min-md) {
+    @media (min-width: $screen-width-md) {
+      @content
+    }
+  }
+  @if ($screen-width == max-md) {
+    @media (max-width: $screen-width-md) {
+      @content
+    }
+  }
+
+  // Screen width LG
+  @if ($screen-width == min-lg) {
+    @media (min-width: $screen-width-lg) {
+      @content
+    }
+  }
+  @if ($screen-width == max-lg) {
+    @media (max-width: $screen-width-lg) {
+      @content
+    }
+  }
+
+  // Screen width XL
+  @if ($screen-width == min-xl) {
+    @media (min-width: $screen-width-xl) {
+      @content
+    }
+  }
+  @if ($screen-width == max-xl) {
+    @media (max-width: $screen-width-xl) {
+      @content
+    }
+  }
+
+  // Screen width 2XL
+  @if ($screen-width == min-2xl) {
+    @media (min-width: $screen-width-2xl) {
+      @content
+    }
+  }
+  @if ($screen-width == max-2xl) {
+    @media (max-width: $screen-width-2xl) {
+      @content
+    }
+  }
+}
+
+$product-card-width: 20rem;

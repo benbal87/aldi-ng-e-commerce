@@ -1,0 +1,16 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar {
+  background-color: #d7e3ff;
+
+  button:last-child {
+    margin-left: 1rem;
+  }
+
+  ::ng-deep .mat-badge-content {
+    width: fit-content;
+    height: fit-content;
+  }
+}

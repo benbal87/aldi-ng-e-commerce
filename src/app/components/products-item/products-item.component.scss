@@ -1,0 +1,42 @@
+@import "globals";
+
+mat-card.product {
+  width: $product-card-width;
+
+  div.img-container {
+    margin: 0.5rem auto;
+    border-radius: 0.2rem;
+    width: 9rem;
+    height: 9rem;
+    overflow: hidden;
+    position: relative;
+
+    img.responsive-image {
+      margin: 0 auto;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  mat-card-title {
+    text-transform: uppercase;
+    padding-bottom: 0.2rem
+  }
+
+  mat-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  mat-form-field {
+    input {
+      font-size: small;
+    }
+  }
+}

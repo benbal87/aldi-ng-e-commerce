@@ -1,0 +1,66 @@
+@import "globals";
+
+mat-card.cart-item {
+
+  mat-card-content {
+    @include responsive-grid-layout();
+
+    div.product-data {
+      display: flex;
+      flex-flow: row nowrap;
+      gap: 1rem;
+
+      & > div.details {
+        display: flex;
+        flex-flow: column nowrap;
+
+        p {
+          white-space: nowrap;
+        }
+
+        button {
+          padding: 0;
+        }
+      }
+    }
+
+    div.quantity-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      input[type=number] {
+        width: 2rem;
+        text-align: center;
+        padding: 0.2rem;
+        border-color: cyan;
+        border-radius: 0.2rem;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+      }
+    }
+
+    div.price-and-total {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @media only screen and (max-width: 768px) {
+        flex: inherit;
+      }
+    }
+
+    @include respond(max-md) {
+      flex-flow: column wrap;
+
+      div.product-data {
+        flex-flow: column wrap;
+      }
+    }
+  }
+
+}

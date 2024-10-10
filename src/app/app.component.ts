@@ -1,13 +1,41 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit } from '@angular/core'
+import { RouterModule, RouterOutlet } from '@angular/router'
+import { Store } from '@ngrx/store'
+import { routeAnimations } from './animations/route.animations'
+import {
+  NavigationComponent
+} from './components/navigation/navigation.component'
+import { Product } from './models/product.model'
+import { ProductsService } from './services/products.service'
+import { CartActions } from './state/cart/cart.actions'
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  imports: [RouterModule, NavigationComponent],
+  template: `
+    <app-navigation></app-navigation>
+    <div [@routeAnimations]="prepareRoute(outlet)">
+      <router-outlet #outlet="outlet"></router-outlet>
+    </div>
+  `,
+  styleUrl: './app.component.scss',
+  animations: [routeAnimations]
 })
-export class AppComponent {
-  title = 'aldi-ng-e-commerce';
+export class AppComponent implements OnInit {
+
+  constructor(private store: Store, private productsService: ProductsService) {
+  }
+
+  ngOnInit(): void {
+    this.productsService.getProducts()
+      .subscribe((products: Product[]) => {
+        this.store.dispatch(CartActions.initializeCart({ products }))
+      })
+  }
+
+  prepareRoute(outlet: RouterOutlet) {
+    return outlet?.activatedRouteData?.['animation']
+  }
+
 }

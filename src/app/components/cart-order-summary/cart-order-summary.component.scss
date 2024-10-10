@@ -1,0 +1,21 @@
+div.order-summary {
+  flex: 25%;
+  position: sticky;
+  top: 20px;
+
+  mat-divider {
+    margin: 0.5rem 0;
+  }
+
+  mat-card-title {
+    margin: 0.5rem 0 0 0.5rem;
+  }
+
+  mat-card-footer {
+    padding: 0 0.5rem;
+  }
+
+  mat-card-actions {
+    justify-content: flex-end;
+  }
+}
