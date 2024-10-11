@@ -12,11 +12,9 @@
     Products
   </button>
   <button
+    [appBadge]="(cartQuantity$ | async) || null"
     mat-raised-button
     routerLink="/cart"
-    matBadge="{{ (cartQuantity$ | async) || null }}"
-    matBadgePosition="below before"
-    matBadgeSize="large"
   >
     <mat-icon>shopping_cart</mat-icon>
     Cart

@@ -44,7 +44,8 @@ mat-card.cart-item {
       }
     }
 
-    div.price-and-total {
+    div.price,
+    div.total {
       display: flex;
       align-items: center;
       justify-content: center;

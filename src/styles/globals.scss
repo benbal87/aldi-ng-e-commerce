@@ -90,3 +90,16 @@ $screen-width-2xl: 1536px;
 }
 
 $product-card-width: 20rem;
+
+@mixin empty-container-notification {
+  font-size: x-large;
+  text-align: center;
+  padding: 5rem 0;
+
+  & > mat-icon {
+    font-size: 3rem;
+    height: auto;
+    width: auto;
+    margin-bottom: 1rem;
+  }
+}

@@ -1,5 +1,5 @@
 import { CommonModule, NgOptimizedImage } from '@angular/common'
-import { Component, OnInit } from '@angular/core'
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -48,7 +48,15 @@ export class CartComponent implements OnInit {
   cart$!: Observable<CartItem[]>
   hasProducts: boolean = false
 
-  constructor(private store: Store, private snackBar: MatSnackBar) {
+  constructor(
+    private store: Store,
+    private snackBar: MatSnackBar,
+    private cdRef: ChangeDetectorRef
+  ) {
+  }
+
+  getSnackBar(): MatSnackBar {
+    return this.snackBar
   }
 
   ngOnInit(): void {
@@ -56,6 +64,9 @@ export class CartComponent implements OnInit {
       .pipe(
         tap((products: CartItem[]): void => {
             this.hasProducts = products.length > 0
+            // Mark for check to avoid
+            // ExpressionChangedAfterItHasBeenCheckedError
+            this.cdRef.detectChanges()
           }
         )
       )
@@ -67,13 +78,7 @@ export class CartComponent implements OnInit {
         CartActions.incrementQuantity({ productId: item.product.id })
       )
     } else {
-      this.snackBar.open(
-        'There are no more available products left!',
-        'Close',
-        {
-          duration: 3000
-        }
-      )
+      this.openSnackBar('There are no more available products left!')
     }
   }
 
@@ -83,17 +88,21 @@ export class CartComponent implements OnInit {
         CartActions.decrementQuantity({ productId: item.product.id })
       )
     } else {
-      this.snackBar.open(
-        'Minimum order amount reached!',
-        'Close',
-        {
-          duration: 3000
-        }
-      )
+      this.openSnackBar('Minimum order amount reached!')
     }
   }
 
   remove(productId: string) {
     this.store.dispatch(CartActions.removeFromCart({ productId }))
+  }
+
+  openSnackBar(message: string): void {
+    this.snackBar.open(
+      message,
+      'Close',
+      {
+        duration: 3000
+      }
+    )
   }
 }

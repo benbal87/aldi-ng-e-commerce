@@ -19,7 +19,7 @@ import { CartActions } from './state/cart/cart.actions'
       <router-outlet #outlet="outlet"></router-outlet>
     </div>
   `,
-  styleUrl: './app.component.scss',
+  styles: ``,
   animations: [routeAnimations]
 })
 export class AppComponent implements OnInit {

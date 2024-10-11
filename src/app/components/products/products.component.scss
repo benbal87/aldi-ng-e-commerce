@@ -1,5 +1,9 @@
 @import "globals";
 
+div.no-products {
+  @include empty-container-notification;
+}
+
 div.sorting-container {
   display: flex;
   justify-content: flex-end;

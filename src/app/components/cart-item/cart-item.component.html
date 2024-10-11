@@ -50,13 +50,13 @@
       </button>
     </div>
 
-    <div class="price-and-total">
+    <div class="price">
       <strong>
         {{ item.product.price | currency }}
       </strong>
     </div>
 
-    <div class="price-and-total">
+    <div class="total">
       <strong>
         {{ (item.quantity * item.product.price) | currency }}
       </strong>

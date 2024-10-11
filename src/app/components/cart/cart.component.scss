@@ -10,16 +10,7 @@ div.shopping-cart-container {
   padding: 1.5rem;
 
   & > div.empty-cart {
-    font-size: x-large;
-    text-align: center;
-    padding: 5rem 0;
-
-    & > mat-icon {
-      font-size: 3rem;
-      height: auto;
-      width: auto;
-      margin-bottom: 1rem;
-    }
+    @include empty-container-notification;
   }
 
   & > div.shopping-cart {

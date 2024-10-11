@@ -1,9 +1,4 @@
-import {
-  BreakpointObserver,
-  Breakpoints,
-  BreakpointState,
-  LayoutModule
-} from '@angular/cdk/layout'
+import { LayoutModule } from '@angular/cdk/layout'
 import { CommonModule, NgOptimizedImage } from '@angular/common'
 import {
   AfterViewInit,
@@ -55,12 +50,10 @@ import { ProductsItemComponent } from '../products-item/products-item.component'
   styleUrl: './products.component.scss'
 })
 export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
-  private readonly GRID_COLS_DEFAULT: number = 4
   private productsSubscription!: Subscription
   products$!: Observable<Product[]>
   sortedProducts$!: Observable<Product[]>
   quantities: { [key: string]: number } = {}
-  gridCols: number = this.GRID_COLS_DEFAULT
   pageIndex: number = 0
   pageSize: number = 5
   pageStartItemIndex: number = 0
@@ -74,15 +67,11 @@ export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatPaginator)
   paginator!: MatPaginator
 
-  constructor(
-    private store: Store,
-    private breakpointObserver: BreakpointObserver
-  ) {
+  constructor(private store: Store) {
     this.dataSource = new MatTableDataSource<Product>([])
   }
 
   ngOnInit(): void {
-    // this.initBreakpointObserver()
     this.products$ = this.store.select(selectAllProducts)
       .pipe(
         tap((products: Product[]): void => {
@@ -96,7 +85,7 @@ export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    this.productsSubscription.unsubscribe()
+    this.productsSubscription?.unsubscribe()
   }
 
   ngAfterViewInit(): void {
@@ -126,60 +115,6 @@ export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
           {}
         )
       })
-  }
-
-  initBreakpointObserver() {
-    this.breakpointObserver.observe([
-      Breakpoints.XSmall,
-      Breakpoints.Small,
-      Breakpoints.Medium,
-      Breakpoints.Large,
-      Breakpoints.XLarge,
-      Breakpoints.Handset,
-      Breakpoints.Tablet,
-      Breakpoints.Web,
-      Breakpoints.HandsetPortrait,
-      Breakpoints.TabletPortrait,
-      Breakpoints.WebPortrait,
-      Breakpoints.HandsetLandscape,
-      Breakpoints.TabletLandscape,
-      Breakpoints.WebLandscape
-    ]).subscribe((result: BreakpointState): void => {
-      if (result.matches) {
-        if (result.breakpoints[Breakpoints.XSmall]) {
-          this.gridCols = 1
-        } else if (result.breakpoints[Breakpoints.Small]) {
-          this.gridCols = 2
-        } else if (result.breakpoints[Breakpoints.Medium]) {
-          this.gridCols = 3
-        } else if (result.breakpoints[Breakpoints.Large]) {
-          this.gridCols = 4
-        } else if (result.breakpoints[Breakpoints.XLarge]) {
-          this.gridCols = 5
-        } else if (result.breakpoints[Breakpoints.Handset]) {
-          this.gridCols = 1
-        } else if (result.breakpoints[Breakpoints.Tablet]) {
-          this.gridCols = 3
-        } else if (result.breakpoints[Breakpoints.Web]) {
-          this.gridCols = 4
-        } else if (result.breakpoints[Breakpoints.HandsetPortrait]) {
-          this.gridCols = 1
-        } else if (result.breakpoints[Breakpoints.TabletPortrait]) {
-          this.gridCols = 3
-        } else if (result.breakpoints[Breakpoints.WebPortrait]) {
-          this.gridCols = 4
-        } else if (result.breakpoints[Breakpoints.HandsetLandscape]) {
-          this.gridCols = 2
-        } else if (result.breakpoints[Breakpoints.TabletLandscape]) {
-          this.gridCols = 4
-        } else if (result.breakpoints[Breakpoints.WebLandscape]) {
-          this.gridCols = 4
-        } else {
-          // Default case if no specific breakpoint matches
-          this.gridCols = this.GRID_COLS_DEFAULT
-        }
-      }
-    })
   }
 
   addToCart(product: Product) {
