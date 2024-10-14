@@ -37,13 +37,11 @@ export const selectCartItems =
       }, [])
   )
 
-export const selectAvailableAmountOfCartItem =
+export const selectCartItem =
   (productId: string) =>
     createSelector(
       selectCartState,
-      (state: CartState): number | undefined =>
+      (state: CartState): CartItem | undefined =>
         state.cart
           .find((item: CartItem): boolean => item.product.id === productId)
-          ?.product
-          .availableAmount
     )

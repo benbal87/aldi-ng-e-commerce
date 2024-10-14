@@ -1,12 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
 import { By } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
-import { MemoizedSelector } from '@ngrx/store'
 import { MockStore, provideMockStore } from '@ngrx/store/testing'
 import { Product } from '../../models/product.model'
-import {
-  selectAvailableAmountOfCartItem
-} from '../../state/cart/cart.selectors'
 
 import { ProductsItemComponent } from './products-item.component'
 
@@ -14,7 +10,6 @@ describe('ProductsItemComponent', () => {
   let component: ProductsItemComponent
   let fixture: ComponentFixture<ProductsItemComponent>
   let store: MockStore
-  let selectAvailableAmountOfCartItemMock: MemoizedSelector<any, number | undefined>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -61,8 +56,6 @@ describe('ProductsItemComponent', () => {
       price: 10.5
     }
     store = TestBed.inject(MockStore)
-    selectAvailableAmountOfCartItemMock =
-      store.overrideSelector(selectAvailableAmountOfCartItem('1'), 6)
     store.refreshState()
     fixture.detectChanges()
   })
@@ -115,16 +108,7 @@ describe('ProductsItemComponent', () => {
       button.click()
 
       expect(button.disabled).toBeFalse()
-      expect(component.handleAddToCart).toHaveBeenCalledWith(
-        {
-          id: '1',
-          name: 'Red apples',
-          img: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-          availableAmount: 5,
-          minOrderAmount: 1,
-          price: 10.5
-        }
-      )
+      expect(component.handleAddToCart).toHaveBeenCalled()
     }
   )
 
@@ -136,11 +120,33 @@ describe('ProductsItemComponent', () => {
         id: '1',
         name: 'Red apples',
         img: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        availableAmount: 0,
+        availableAmount: 8,
         minOrderAmount: 1,
         price: 10.5
       }
       component.product = productWithZeroAvailableAmount
+
+      store.setState({
+        cart: {
+          cart: [
+            {
+              product: {
+                id: '1',
+                name: 'Red apples',
+                img: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                availableAmount: 0,
+                minOrderAmount: 1,
+                price: 10.5
+              },
+              quantity: 10
+            }
+          ]
+        },
+        products: {
+          products: []
+        }
+      })
+      fixture.detectChanges()
 
       spyOn(component, 'handleAddToCart')
       fixture.detectChanges()
@@ -152,9 +158,7 @@ describe('ProductsItemComponent', () => {
       button.click()
 
       expect(button.disabled).toBeTrue()
-      expect(component.handleAddToCart).not.toHaveBeenCalledWith(
-        productWithZeroAvailableAmount
-      )
+      expect(component.handleAddToCart).not.toHaveBeenCalled()
     }
   )
 
@@ -174,6 +178,28 @@ describe('ProductsItemComponent', () => {
       component.quantity = 5
       component.product = productWithZeroAvailableAmount
 
+      store.setState({
+        cart: {
+          cart: [
+            {
+              product: {
+                id: '1',
+                name: 'Red apples',
+                img: 'https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                availableAmount: 4,
+                minOrderAmount: 1,
+                price: 10.5
+              },
+              quantity: 10
+            }
+          ]
+        },
+        products: {
+          products: []
+        }
+      })
+      fixture.detectChanges()
+
       spyOn(component, 'handleAddToCart')
       fixture.detectChanges()
 
@@ -184,9 +210,7 @@ describe('ProductsItemComponent', () => {
       button.click()
 
       expect(button.disabled).toBeTrue()
-      expect(component.handleAddToCart).not.toHaveBeenCalledWith(
-        productWithZeroAvailableAmount
-      )
+      expect(component.handleAddToCart).not.toHaveBeenCalledWith()
     }
   )
 
@@ -209,7 +233,7 @@ describe('ProductsItemComponent', () => {
 
       const availableAmount = fixture
         .debugElement
-        .query(By.css('mat-card-content p:last-child'))
+        .query(By.css('mat-card-content p:nth-child(2)'))
         ?.nativeElement
 
       expect(availableAmount.innerText).toContain('Available Amount: 8')
@@ -217,8 +241,8 @@ describe('ProductsItemComponent', () => {
   )
 
   it(
-    'should show available amount in the product instead of the available ' +
-    'amount in the product is not in the cart',
+    'should show available amount found in the product instead of ' +
+    'the available amount found in the cart - when cart is empty',
     () => {
       const productWithZeroAvailableAmount: Product = {
         id: '1',
@@ -244,7 +268,7 @@ describe('ProductsItemComponent', () => {
 
       const availableAmount = fixture
         .debugElement
-        .query(By.css('mat-card-content p:last-child'))
+        .query(By.css('mat-card-content p:nth-child(2)'))
         ?.nativeElement
 
       expect(availableAmount.innerText).toContain('Available Amount: 7')

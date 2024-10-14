@@ -30,15 +30,23 @@ const cartReducer = createReducer(
         quantity: quantityInCart
       } = updatedCart[indexOfProductInCart] ?? {}
 
-      if (productFound && productFound.availableAmount >= quantityToAdd) {
+      if (
+        productFound &&
+        productFound.availableAmount >= quantityToAdd &&
+        quantityToAdd > 0
+      ) {
         updatedCart[indexOfProductInCart] = {
           product: {
-            ...product,
+            ...productFound,
             availableAmount: productFound.availableAmount - quantityToAdd
           },
           quantity: quantityInCart + quantityToAdd
         }
-      } else if (product && product.availableAmount >= quantityToAdd) {
+      } else if (
+        product &&
+        product.availableAmount >= quantityToAdd &&
+        product.minOrderAmount <= quantityToAdd
+      ) {
         const newCartItem: CartItem = {
           product: {
             ...product,
