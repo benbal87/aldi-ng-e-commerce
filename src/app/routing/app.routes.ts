@@ -1,6 +1,4 @@
 import { Routes } from '@angular/router'
-import { CartComponent } from '../components/cart/cart.component'
-import { ProductsComponent } from '../components/products/products.component'
 import { WelcomeComponent } from '../components/welcome/welcome.component'
 
 export const routes: Routes = [
@@ -11,18 +9,28 @@ export const routes: Routes = [
   },
   {
     path: 'products',
-    component: ProductsComponent,
-    data: { animation: 'ProductsPage' }
+    loadComponent: () =>
+      import('../components/products/products.component')
+        .then(m => m.ProductsComponent),
+    data: {
+      animation: 'ProductsPage'
+    }
   },
   {
     path: 'cart',
-    component: CartComponent,
-    data: { animation: 'CartsPage' }
+    loadComponent: () =>
+      import('../components/cart/cart.component')
+        .then(m => m.CartComponent),
+    data: {
+      animation: 'CartsPage'
+    }
   },
   {
     path: 'welcome',
     component: WelcomeComponent,
-    data: { animation: 'WelcomePage' }
+    data: {
+      animation: 'WelcomePage'
+    }
   },
   {
     path: '**',
