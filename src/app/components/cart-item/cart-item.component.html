@@ -19,7 +19,7 @@
           mat-raised-button
           color="warn"
           matTooltip="Remove Product from Cart"
-          (click)="handleRemove(item.product.id)"
+          (click)="handleRemove()"
         >
           <mat-icon>delete</mat-icon>
           Remove
@@ -31,20 +31,21 @@
       <button
         mat-icon-button
         color="primary"
-        (click)="handleDecrement(item)"
+        (click)="handleDecrement()"
       >
         <mat-icon>remove</mat-icon>
       </button>
       <input
         type="number"
-        [value]="item.quantity"
+        #quantityInput
+        [(ngModel)]="quantity"
         [min]="item.product.minOrderAmount"
         [max]="item.product.availableAmount"
       />
       <button
         mat-icon-button
         color="primary"
-        (click)="handleIncrement(item)"
+        (click)="handleIncrement()"
       >
         <mat-icon>add</mat-icon>
       </button>

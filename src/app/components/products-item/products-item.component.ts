@@ -1,13 +1,19 @@
-import { NgOptimizedImage } from '@angular/common'
-import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { AsyncPipe, NgOptimizedImage } from '@angular/common'
+import { Component, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { MatIconButton } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
-import { MatFormField, MatLabel } from '@angular/material/form-field'
+import { MatFormField } from '@angular/material/form-field'
 import { MatIcon } from '@angular/material/icon'
-import { MatInput } from '@angular/material/input'
+import { MatInput, MatLabel } from '@angular/material/input'
 import { MatTooltip } from '@angular/material/tooltip'
+import { Store } from '@ngrx/store'
+import { Observable } from 'rxjs'
 import { Product } from '../../models/product.model'
+import { CartActions } from '../../state/cart/cart.actions'
+import {
+  selectAvailableAmountOfCartItem
+} from '../../state/cart/cart.selectors'
 
 @Component({
   selector: 'app-products-item',
@@ -21,24 +27,35 @@ import { Product } from '../../models/product.model'
     MatInput,
     MatLabel,
     MatTooltip,
-    NgOptimizedImage
+    NgOptimizedImage,
+    AsyncPipe
   ],
   templateUrl: './products-item.component.html',
   styleUrl: './products-item.component.scss'
 })
-export class ProductsItemComponent {
+export class ProductsItemComponent implements OnInit {
 
   @Input()
   product!: Product
 
-  @Output()
-  addToCart: EventEmitter<Product> = new EventEmitter<Product>()
+  quantity: number = 0
 
-  @Input()
-  quantities: { [key: string]: number } = {}
+  availableAmountInCart$!: Observable<number | undefined>
+
+  constructor(private store: Store) {
+  }
+
+  ngOnInit(): void {
+    this.quantity = this.product.minOrderAmount
+    this.availableAmountInCart$ =
+      this.store.select(selectAvailableAmountOfCartItem(this.product.id))
+  }
 
   handleAddToCart(product: Product): void {
-    this.addToCart.emit(product)
+    const quantity: number = this.quantity || product.minOrderAmount
+    if (quantity <= product.availableAmount) {
+      this.store.dispatch(CartActions.addToCart({ product, quantity }))
+    }
   }
 
 }

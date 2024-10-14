@@ -22,18 +22,7 @@ import { routeAnimations } from '../../animations/route.animations'
       </mat-card-content>
     </mat-card>
   `,
-  styles: `
-    .centered-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    mat-card-header {
-      margin-bottom: 1rem;
-    }
-  `,
+  styles: '',
   animations: [routeAnimations]
 })
 export class WelcomeComponent {

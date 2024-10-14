@@ -1,42 +1,35 @@
-<div class="shopping-cart-container">
+@if ((cartItems$ | async)?.length ?? 0 > 0) {
+  <div class="shopping-cart-container">
+    <div class="shopping-cart">
+      <div class="cart-items">
 
-  @if (!hasProducts) {
-    <div class="empty-cart">
-      <mat-icon class="mat-icon-large">remove_shopping_cart</mat-icon>
-      <p>It looks like you don't have any products in you cart.</p>
-    </div>
-  }
+        <div class="cart-items-header">
+          <p>Product Details</p>
+          <p>Quantity</p>
+          <p>Price</p>
+          <p>Total</p>
+        </div>
 
-  <div class="shopping-cart" [hidden]="!hasProducts">
-
-    <div class="cart-items">
-
-      <div class="cart-items-header">
-        <p>Product Details</p>
-        <p>Quantity</p>
-        <p>Price</p>
-        <p>Total</p>
+        @for (item of cartItems$ | async; track item) {
+          <app-cart-item [item]="item" />
+        }
       </div>
 
-      @for (item of cart$ | async; track item) {
-        <app-cart-item
-          [item]="item"
-          (inc)="increment($event)"
-          (dec)="decrement($event)"
-          (remove)="remove($event)"
-        ></app-cart-item>
-      }
+      <app-cart-order-summary></app-cart-order-summary>
     </div>
 
-    <app-cart-order-summary></app-cart-order-summary>
+    <a
+      mat-button
+      color="primary"
+      routerLink="/products"
+    >
+      <mat-icon>arrow_back</mat-icon>
+      Continue Shopping
+    </a>
   </div>
-
-  <a
-    mat-button
-    color="primary"
-    routerLink="/products"
-  >
-    <mat-icon>arrow_back</mat-icon>
-    Continue Shopping
-  </a>
-</div>
+} @else {
+  <div class="empty-cart">
+    <mat-icon class="mat-icon-large">remove_shopping_cart</mat-icon>
+    <p>It looks like you don't have any products in you cart.</p>
+  </div>
+}

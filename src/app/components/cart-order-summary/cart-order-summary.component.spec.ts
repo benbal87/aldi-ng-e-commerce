@@ -14,13 +14,21 @@ describe('CartOrderSummaryComponent', () => {
   let component: CartOrderSummaryComponent
   let fixture: ComponentFixture<CartOrderSummaryComponent>
   let store: MockStore
-  const initialState = { cart: [] }
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
         imports: [CartOrderSummaryComponent, BrowserAnimationsModule],
         providers: [
-          provideMockStore({ initialState })
+          provideMockStore({
+            initialState: {
+              cart: {
+                cart: []
+              },
+              products: {
+                products: []
+              }
+            }
+          })
         ]
       })
       .compileComponents()

@@ -1,19 +1,11 @@
-import { CommonModule, NgOptimizedImage } from '@angular/common'
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core'
-import { FormsModule } from '@angular/forms'
+import { CommonModule } from '@angular/common'
+import { Component, OnInit } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
-import { MatCardModule } from '@angular/material/card'
-import { MatDivider } from '@angular/material/divider'
-import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatInputModule, MatLabel } from '@angular/material/input'
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'
-import { MatTooltip } from '@angular/material/tooltip'
 import { RouterLink } from '@angular/router'
 import { Store } from '@ngrx/store'
-import { Observable, tap } from 'rxjs'
+import { Observable } from 'rxjs'
 import { CartItem } from '../../models/cart.model'
-import { CartActions } from '../../state/cart/cart.actions'
 import { selectCartItems } from '../../state/cart/cart.selectors'
 import { CartItemComponent } from '../cart-item/cart-item.component'
 import {
@@ -25,19 +17,9 @@ import {
   standalone: true,
   imports: [
     CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    MatLabel,
     RouterLink,
-    MatDivider,
-    FormsModule,
-    NgOptimizedImage,
-    MatTooltip,
-    MatFormFieldModule,
-    MatInputModule,
     MatIconModule,
     MatButtonModule,
-    MatSnackBarModule,
     CartItemComponent,
     CartOrderSummaryComponent
   ],
@@ -45,64 +27,13 @@ import {
   styleUrl: './cart.component.scss'
 })
 export class CartComponent implements OnInit {
-  cart$!: Observable<CartItem[]>
-  hasProducts: boolean = false
 
-  constructor(
-    private store: Store,
-    private snackBar: MatSnackBar,
-    private cdRef: ChangeDetectorRef
-  ) {
-  }
+  cartItems$!: Observable<CartItem[]>
 
-  getSnackBar(): MatSnackBar {
-    return this.snackBar
+  constructor(private store: Store) {
   }
 
   ngOnInit(): void {
-    this.cart$ = this.store.select(selectCartItems)
-      .pipe(
-        tap((products: CartItem[]): void => {
-            this.hasProducts = products.length > 0
-            // Mark for check to avoid
-            // ExpressionChangedAfterItHasBeenCheckedError
-            this.cdRef.detectChanges()
-          }
-        )
-      )
-  }
-
-  increment(item: CartItem): void {
-    if (item.product.availableAmount >= 1) {
-      this.store.dispatch(
-        CartActions.incrementQuantity({ productId: item.product.id })
-      )
-    } else {
-      this.openSnackBar('There are no more available products left!')
-    }
-  }
-
-  decrement(item: CartItem): void {
-    if (item.quantity - 1 >= item.product.minOrderAmount) {
-      this.store.dispatch(
-        CartActions.decrementQuantity({ productId: item.product.id })
-      )
-    } else {
-      this.openSnackBar('Minimum order amount reached!')
-    }
-  }
-
-  remove(productId: string) {
-    this.store.dispatch(CartActions.removeFromCart({ productId }))
-  }
-
-  openSnackBar(message: string): void {
-    this.snackBar.open(
-      message,
-      'Close',
-      {
-        duration: 3000
-      }
-    )
+    this.cartItems$ = this.store.select(selectCartItems)
   }
 }

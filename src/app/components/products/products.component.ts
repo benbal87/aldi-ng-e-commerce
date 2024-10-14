@@ -1,31 +1,25 @@
-import { LayoutModule } from '@angular/cdk/layout'
-import { CommonModule, NgOptimizedImage } from '@angular/common'
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core'
-import { FormsModule } from '@angular/forms'
+import { CommonModule } from '@angular/common'
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
-import { MatGridListModule } from '@angular/material/grid-list'
 import { MatIcon } from '@angular/material/icon'
-import { MatInputModule } from '@angular/material/input'
 import {
   MatPaginator,
   MatPaginatorModule,
   PageEvent
 } from '@angular/material/paginator'
+import { MatProgressSpinner } from '@angular/material/progress-spinner'
 import { MatSort, MatSortModule, Sort } from '@angular/material/sort'
 import { MatTableDataSource } from '@angular/material/table'
-import { MatTooltip } from '@angular/material/tooltip'
 import { Store } from '@ngrx/store'
-import { map, Observable, Subscription, tap } from 'rxjs'
+import { Observable, tap } from 'rxjs'
 import { Product } from '../../models/product.model'
-import { CartActions } from '../../state/cart/cart.actions'
-import { selectAllProducts } from '../../state/cart/cart.selectors'
+import { ProductsActions } from '../../state/products/products.actions'
+import {
+  selectAllProducts,
+  selectProductsError,
+  selectProductsIsLoading
+} from '../../state/products/products.selector'
 import { ProductsItemComponent } from '../products-item/products-item.component'
 
 @Component({
@@ -33,27 +27,21 @@ import { ProductsItemComponent } from '../products-item/products-item.component'
   standalone: true,
   imports: [
     CommonModule,
-    MatGridListModule,
     MatCardModule,
     MatButtonModule,
-    MatInputModule,
-    FormsModule,
-    NgOptimizedImage,
     MatIcon,
-    MatTooltip,
-    LayoutModule,
     MatPaginatorModule,
     MatSortModule,
-    ProductsItemComponent
+    ProductsItemComponent,
+    MatProgressSpinner
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss'
 })
-export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
-  private productsSubscription!: Subscription
+export class ProductsComponent implements OnInit, AfterViewInit {
   products$!: Observable<Product[]>
-  sortedProducts$!: Observable<Product[]>
-  quantities: { [key: string]: number } = {}
+  isLoading$!: Observable<boolean>
+  error$!: Observable<string | null>
   pageIndex: number = 0
   pageSize: number = 5
   pageStartItemIndex: number = 0
@@ -72,20 +60,16 @@ export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.store.dispatch(ProductsActions.loadProducts())
+
     this.products$ = this.store.select(selectAllProducts)
       .pipe(
         tap((products: Product[]): void => {
           this.dataSource.data = products
         })
       )
-    this.sortedProducts$ = this.products$.pipe(
-      map(products => this.sortData(this.sortState, products))
-    )
-    this.initQuantities()
-  }
-
-  ngOnDestroy(): void {
-    this.productsSubscription?.unsubscribe()
+    this.isLoading$ = this.store.select(selectProductsIsLoading)
+    this.error$ = this.store.select(selectProductsError)
   }
 
   ngAfterViewInit(): void {
@@ -103,27 +87,6 @@ export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  initQuantities(): void {
-    this.productsSubscription =
-      this.products$.subscribe((products: Product[]): void => {
-        this.quantities = products.reduce(
-          (acc: { [key: string]: number }, { id, minOrderAmount }: Product) =>
-            ({
-              ...acc,
-              [id]: minOrderAmount
-            }),
-          {}
-        )
-      })
-  }
-
-  addToCart(product: Product) {
-    const quantity = this.quantities[product.id] || product.minOrderAmount
-    if (quantity <= product.availableAmount) {
-      this.store.dispatch(CartActions.addToCart({ product, quantity }))
-    }
-  }
-
   handlePageEvent(e: PageEvent): void {
     this.pageIndex = e.pageIndex
     this.pageSize = e.pageSize
@@ -131,12 +94,13 @@ export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
     this.pageEndItemIndex = this.pageStartItemIndex + this.pageSize
   }
 
-  sortData(sort: Sort, products: Product[]): Product[] {
+  sortData(sort: Sort, products: Product[]) {
     if (!sort.active || sort.direction === '') {
-      return products
+      return
     }
 
-    return products.sort((a, b) => {
+    const productsCopy = [...products]
+    const sorted = productsCopy.sort((a, b) => {
       const isAsc = sort.direction === 'asc'
       switch (sort.active) {
         case 'name':
@@ -147,6 +111,10 @@ export class ProductsComponent implements OnInit, OnDestroy, AfterViewInit {
           return 0
       }
     })
+
+    this.store.dispatch(ProductsActions.loadProductsSuccess({
+      products: sorted
+    }))
   }
 
   compare(a: string | number, b: string | number, isAsc: boolean) {

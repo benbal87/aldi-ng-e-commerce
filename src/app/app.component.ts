@@ -5,8 +5,6 @@ import { routeAnimations } from './animations/route.animations'
 import {
   NavigationComponent
 } from './components/navigation/navigation.component'
-import { Product } from './models/product.model'
-import { ProductsService } from './services/products.service'
 import { CartActions } from './state/cart/cart.actions'
 
 @Component({
@@ -24,14 +22,11 @@ import { CartActions } from './state/cart/cart.actions'
 })
 export class AppComponent implements OnInit {
 
-  constructor(private store: Store, private productsService: ProductsService) {
+  constructor(private store: Store) {
   }
 
   ngOnInit(): void {
-    this.productsService.getProducts()
-      .subscribe((products: Product[]) => {
-        this.store.dispatch(CartActions.initializeCart({ products }))
-      })
+    this.store.dispatch(CartActions.initializeCart({ products: [] }))
   }
 
   prepareRoute(outlet: RouterOutlet) {

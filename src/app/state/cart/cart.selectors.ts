@@ -1,18 +1,14 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store'
 import { CartItem, CartState } from '../../models/cart.model'
-import { Product } from '../../models/product.model'
 
 export const selectCartState =
   createFeatureSelector<CartState>('cart')
 
-export const selectCart =
-  createSelector(selectCartState, state => state.cart)
-
 export const selectCartTotalQuantity =
   createSelector(
-    selectCart,
-    (cart: CartItem[]): number =>
-      cart.reduce(
+    selectCartState,
+    (state: CartState): number =>
+      state.cart.reduce(
         (sum: number, item: CartItem): number => sum + item.quantity,
         0
       )
@@ -20,9 +16,9 @@ export const selectCartTotalQuantity =
 
 export const selectCartTotalPrice =
   createSelector(
-    selectCart,
-    (cart: CartItem[]): number =>
-      cart.reduce(
+    selectCartState,
+    (cart: CartState): number =>
+      cart.cart.reduce(
         (total: number, item: CartItem): number =>
           total + item.product.price * item.quantity,
         0
@@ -31,9 +27,9 @@ export const selectCartTotalPrice =
 
 export const selectCartItems =
   createSelector(
-    selectCart,
-    (cart: CartItem[]): CartItem[] =>
-      cart.reduce((acc: CartItem[], item: CartItem): CartItem[] => {
+    selectCartState,
+    (cart: CartState): CartItem[] =>
+      cart.cart.reduce((acc: CartItem[], item: CartItem): CartItem[] => {
         return [
           ...acc,
           ...(item.quantity > 0 ? [item] : [])
@@ -41,8 +37,13 @@ export const selectCartItems =
       }, [])
   )
 
-export const selectAllProducts =
-  createSelector(
-    selectCart,
-    (cart: CartItem[]): Product[] => cart.map(item => item.product)
-  )
+export const selectAvailableAmountOfCartItem =
+  (productId: string) =>
+    createSelector(
+      selectCartState,
+      (state: CartState): number | undefined =>
+        state.cart
+          .find((item: CartItem): boolean => item.product.id === productId)
+          ?.product
+          .availableAmount
+    )

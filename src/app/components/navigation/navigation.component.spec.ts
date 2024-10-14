@@ -12,6 +12,7 @@ import { By } from '@angular/platform-browser'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { provideRouter } from '@angular/router'
 import { RouterTestingHarness } from '@angular/router/testing'
+import { MemoizedSelector } from '@ngrx/store'
 import { MockStore, provideMockStore } from '@ngrx/store/testing'
 import { BadgeDirective } from '../../directives/badge.directive'
 import { selectCartTotalQuantity } from '../../state/cart/cart.selectors'
@@ -27,6 +28,7 @@ describe('NavigationComponent', () => {
   let fixture: ComponentFixture<NavigationComponent>
   let store: MockStore
   let harness: RouterTestingHarness
+  let selectCartTotalQuantityMock: MemoizedSelector<any, number>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -41,7 +43,16 @@ describe('NavigationComponent', () => {
           NavigationComponent
         ],
         providers: [
-          provideMockStore({ initialState: { cart: [] } }),
+          provideMockStore({
+            initialState: {
+              cart: {
+                cart: []
+              },
+              products: {
+                products: []
+              }
+            }
+          }),
           provideRouter([
             { path: 'welcome', component: WelcomeComponent },
             { path: 'products', component: ProductsComponent },
@@ -55,6 +66,8 @@ describe('NavigationComponent', () => {
     component = fixture.componentInstance
     store = TestBed.inject(MockStore)
     harness = await RouterTestingHarness.create()
+    selectCartTotalQuantityMock =
+      store.overrideSelector(selectCartTotalQuantity, 3)
     fixture.detectChanges()
   })
 
@@ -105,7 +118,7 @@ describe('NavigationComponent', () => {
   it(
     'should show number of cart items if items added to cart',
     fakeAsync(() => {
-      store.overrideSelector(selectCartTotalQuantity, 3)
+      selectCartTotalQuantityMock.setResult(3)
       store.refreshState()
       component.ngOnInit()
       tick(1000)
@@ -134,7 +147,7 @@ describe('NavigationComponent', () => {
   it(
     'should not show number of cart items if items added to cart',
     fakeAsync(() => {
-      store.overrideSelector(selectCartTotalQuantity, 0)
+      selectCartTotalQuantityMock.setResult(0)
       store.refreshState()
       component.ngOnInit()
       tick(1000)

@@ -6,3 +6,9 @@ export interface Product {
   minOrderAmount: number
   price: number
 }
+
+export interface ProductsState {
+  products: Product[];
+  isLoading: boolean;
+  error: string | null;
+}

@@ -1,48 +1,64 @@
-<ng-container *ngIf="products$ | async as products">
+@if (isLoading$ | async) {
+  <mat-spinner class="loader" />
+}
 
-  <div
-    *ngIf="products?.length === 0; else productList"
-    class="no-products"
-  >
-    <mat-icon>sentiment_dissatisfied</mat-icon>
-    <p>No products available...</p>
-  </div>
+@if (error$ | async) {
+  <mat-card class="centered-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon color="warn">error</mat-icon>
+        Error!
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p>{{ error$ | async }}</p>
+    </mat-card-content>
+  </mat-card>
+}
 
-  <ng-template #productList>
+@if ((isLoading$ | async) === false && !(error$ | async)) {
+  <ng-container *ngIf="products$ | async as products">
+
     <div
-      matSort
-      (matSortChange)="sortData($event, products)"
-      class="sorting-container"
+      *ngIf="products?.length === 0; else productList"
+      class="no-products"
     >
-      <button
-        mat-raised-button
-        [disabled]="sortState.active === 'name'"
-      >
-        <a mat-sort-header="name">Sort by Name</a>
-      </button>
-      <button
-        mat-raised-button
-        [disabled]="sortState.active === 'price'"
-      >
-        <a mat-sort-header="price">Sort by Price</a>
-      </button>
+      <mat-icon>sentiment_dissatisfied</mat-icon>
+      <p>No products available...</p>
     </div>
 
-    <div class="grid-container">
+    <ng-template #productList>
+      <div
+        matSort
+        (matSortChange)="sortData($event, products)"
+        class="sorting-container"
+      >
+        <button
+          mat-raised-button
+          [disabled]="sortState.active === 'name'"
+        >
+          <a mat-sort-header="name">Sort by Name</a>
+        </button>
+        <button
+          mat-raised-button
+          [disabled]="sortState.active === 'price'"
+        >
+          <a mat-sort-header="price">Sort by Price</a>
+        </button>
+      </div>
 
-      <ng-container *ngFor="let product of (products | slice: pageStartItemIndex: pageEndItemIndex)">
-        <app-products-item
-          [product]="product"
-          [quantities]="quantities"
-          (addToCart)="addToCart($event)"
-        ></app-products-item>
-      </ng-container>
+      <div class="grid-container">
 
-    </div>
+        <ng-container *ngFor="let product of (products | slice: pageStartItemIndex: pageEndItemIndex)">
+          <app-products-item [product]="product" />
+        </ng-container>
 
-  </ng-template>
+      </div>
 
-</ng-container>
+    </ng-template>
+
+  </ng-container>
+}
 
 <mat-paginator
   (page)="handlePageEvent($event)"
