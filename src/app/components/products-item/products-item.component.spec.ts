@@ -207,11 +207,6 @@ describe('ProductsItemComponent', () => {
 
       fixture.detectChanges()
 
-      console.log(
-        '@@@@',
-        document.querySelector('mat-card-content p:last-child')?.innerHTML
-      )
-
       const availableAmount = fixture
         .debugElement
         .query(By.css('mat-card-content p:last-child'))
@@ -246,11 +241,6 @@ describe('ProductsItemComponent', () => {
       })
 
       fixture.detectChanges()
-
-      console.log(
-        '@@@@',
-        document.querySelector('mat-card-content p:last-child')?.innerHTML
-      )
 
       const availableAmount = fixture
         .debugElement
